@@ -11,12 +11,12 @@
 
 // Einfuegen der standard Include-Dateien
 //----------------------------------------------------------------------
-#include <inttypes.h>
+
 //----------------------------------------------------------------------
 
 // Einfuegen der STM Include-Dateien
 //----------------------------------------------------------------------
-
+#include "main.h"
 //----------------------------------------------------------------------
 
 // Einfuegen der eigenen Include Dateien
@@ -76,7 +76,7 @@ void xmodem_receive (void)
 		// Spam den Host mit ASCII "C" bis was empfangen wird, um mitzuteilen, das wir CRC16 nutzen wollen
 		if ((UART_OK != comm_status) && (false == x_first_packet_received))
 		{
-			uartTransmitChar(X_C, 1);
+			uartTransmitChar(X_C);
 
 			// Wenn Application valid
 			if (app_valid == true)
@@ -115,7 +115,7 @@ void xmodem_receive (void)
 				packet_status = xmodem_handle_packet(header);
 				if (X_OK == packet_status)
 				{
-					uartTransmitChar(X_ACK, 1);
+					uartTransmitChar(X_ACK);
 				}
 				// Wenn der Fehler vom Flash kommt, sofort alles abbrechen
 				else if (X_ERROR_FLASH == packet_status)
@@ -136,8 +136,8 @@ void xmodem_receive (void)
 			case X_ETB:
 			{
 				// Uebertragung beenden
-				uartTransmitChar(X_EOT, 1);
-				uartTransmitChar(X_EOT, 1);
+				uartTransmitChar(X_EOT);
+				uartTransmitChar(X_EOT);
 				
 				// Flash valid Speicher beschreiben
 				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
@@ -153,8 +153,8 @@ void xmodem_receive (void)
 			case X_CAN:
 			{
 				// Übertragung abbrechen
-				uartTransmitChar(X_CAN, 1);
-				uartTransmitChar(X_CAN, 1);
+				uartTransmitChar(X_CAN);
+				uartTransmitChar(X_CAN);
 				status = X_ERROR;
 				break;
 			}
@@ -163,7 +163,7 @@ void xmodem_receive (void)
 			case X_APP:
 			{
 				// Zu Application springen
-				uartTransmitChar(X_CAN, 1);
+				uartTransmitChar(X_CAN);
 				uartTransmit("\nApplication vorhanden.\n", 24);
 				uartTransmit("Springe zu Benutzer Application...\n", 35);
 				flash_jump_to_app();
@@ -336,15 +336,15 @@ xmodem_status xmodem_error_handler (uint8_t *error_number, uint8_t max_error_num
 	if ((*error_number) >= max_error_number)
 	{
 		// Abbruch
-		uartTransmitChar(X_CAN, 1);
-		uartTransmitChar(X_CAN, 1);
+		uartTransmitChar(X_CAN);
+		uartTransmitChar(X_CAN);
 
 		status = X_ERROR;
 	}
 	// Ansonsten sende NAK fuer widerholen
 	else
 	{
-		uartTransmitChar(X_NAK, 1);
+		uartTransmitChar(X_NAK);
 		status = X_OK;
 	}
 	
