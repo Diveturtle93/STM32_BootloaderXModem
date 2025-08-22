@@ -6,7 +6,7 @@
 // Version	:	1.0
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader XModem
-// Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/xmodem.h
+// Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Inc/xmodem.h
 //----------------------------------------------------------------------
 
 // Dateiheader definieren
@@ -28,6 +28,7 @@
 // Konstanten definieren
 //----------------------------------------------------------------------
 #define X_MAX_ERROR							3								// Anzahl maximal zulaessiger Fehler
+//----------------------------------------------------------------------
 
 // Paket groessen definieren
 //----------------------------------------------------------------------

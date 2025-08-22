@@ -6,7 +6,7 @@
 // Version	:	1.0
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader
-// Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/flash.h
+// Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Inc/flash.h
 //----------------------------------------------------------------------
 
 // Dateiheader definieren
@@ -22,7 +22,7 @@
 
 // Einfuegen der STM Include-Dateien
 //----------------------------------------------------------------------
-#include "stm32g0xx.h"
+#include "main.h"
 //----------------------------------------------------------------------
 
 // Konstanten definieren

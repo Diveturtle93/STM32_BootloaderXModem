@@ -43,11 +43,23 @@ flash_status flash_erase (uint32_t address)
 	
 	// Flash initialisieren
 	erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
-	erase_init.Page = GetPage(address);
 	erase_init.Banks = FLASH_BANK_1;
 
+#ifdef STM32F1
+	// Flash Page ermitteln
+	erase_init.PageAddress = address;
+	
+	// Kalkuliere die Anzahl der Pages von der Startadresse bis zum Ende
+	erase_init.NbPages = GetPage(FLASH_APP_END_ADDRESS) - GetPage(address);
+#endif
+
+#ifdef STM32G0
+	// Flash Page ermitteln
+	erase_init.Page = GetPage(address);
+	
 	// Kalkuliere die Anzahl der Pages von der Startadresse bis zum Ende
 	erase_init.NbPages = GetPage(FLASH_APP_END_ADDRESS) - erase_init.Page + 1;
+#endif
 
 	// Loesche Flash
 	if (HAL_OK == HAL_FLASHEx_Erase(&erase_init, &error))
