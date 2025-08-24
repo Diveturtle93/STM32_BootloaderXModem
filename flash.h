@@ -27,9 +27,26 @@
 
 // Konstanten definieren
 //----------------------------------------------------------------------
-#define FLASH_APP_START_ADDRESS		(0x8008000)								// Flash Startadresse fuer Application
-#define FLASH_APP_END_ADDRESS		(0x8010000 - 1)							// Am Ende noch etwas Platz lassen
-#define FLASH_APP_VALID_ADDRESS		(0x8007FF8)								// Flash Speicheradresse, wenn Application installed und valid
+#define FLASH_APP_START_ADDRESS				(0x8008000)						// Flash Startadresse fuer Application
+#define FLASH_APP_VALID_ADDRESS				(0x8007FF8)						// Flash Speicheradresse, wenn Application installed und valid
+//----------------------------------------------------------------------
+
+// Flash default Endadresse definieren
+//----------------------------------------------------------------------
+#ifndef FLASH_APP_END_ADDRESS
+	#define FLASH_APP_END_ADDRESS			FLASH_END
+/*	#ifdef STM32F1
+		#define FLASH_APP_END_ADDRESS		(0x803FFFF)						// Flash Endadresse Festlegen fuer STM32F105
+	#endif
+
+	#ifdef STM32F7
+		#define FLASH_APP_END_ADDRESS		(0x81FFFFF)						// Flash Endadresse Festlegen fuer STM32F105
+	#endif
+
+	#ifdef STM32G0
+		#define FLASH_APP_END_ADDRESS		(0x801FFFF)						// Flash Endadresse Festlegen fuer STM32F105
+	#endif*/
+#endif
 //----------------------------------------------------------------------
 
 // Typedefines definieren
@@ -47,11 +64,11 @@ typedef enum
 
 // Funktionen definieren
 //----------------------------------------------------------------------
-flash_status flash_erase (uint32_t address);
-flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length);
-uint32_t GetPage (uint32_t address);
-flash_status flash_validation (uint32_t address, uint8_t *data);
-void flash_jump_to_app (void);
+flash_status flash_erase (uint32_t address);								// Flash loeschen
+flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length);// Flash schreiben
+flash_status flash_validation (uint32_t address, uint8_t *data);			// Flash validieren
+void flash_jump_to_app (void);												// Zu Application springen
+uint32_t GetPage (uint32_t address);										// Pageanzahl bekommen
 //----------------------------------------------------------------------
 
 #endif /* INC_FLASH_H_ */

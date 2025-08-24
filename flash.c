@@ -42,8 +42,12 @@ flash_status flash_erase (uint32_t address)
 	uint32_t error = 0;
 	
 	// Flash initialisieren
-	erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
 	erase_init.Banks = FLASH_BANK_1;
+
+#if defined (STM32F1) || defined (STM32G0)
+	// Flash Erase definieren
+	erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
+#endif
 
 #ifdef STM32F1
 	// Flash Page ermitteln
@@ -51,6 +55,20 @@ flash_status flash_erase (uint32_t address)
 	
 	// Kalkuliere die Anzahl der Pages von der Startadresse bis zum Ende
 	erase_init.NbPages = GetPage(FLASH_APP_END_ADDRESS) - GetPage(address);
+#endif
+
+#ifdef STM32F7
+	// Flash Erase definieren
+	erase_init.TypeErase = FLASH_TYPEERASE_SECTORS;
+
+	// Kalkuliere die Anzahl der Sectoren von der Startadresse bis Ende
+	erase_init.Sector = FLASH_SECTOR_1;
+
+	// Kalkuliere die Anzahl der Sectoren von der Startadresse bis Ende
+	erase_init.NbSectors = FLASH_SECTOR_11;
+
+	// Flash VoltageRange setzen
+	erase_init.VoltageRange = VOLTAGE_RANGE_3;
 #endif
 
 #ifdef STM32G0
@@ -133,14 +151,6 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 }
 //----------------------------------------------------------------------
 
-// Flash Addresse ermitteln
-//----------------------------------------------------------------------
-uint32_t GetPage (uint32_t address)
-{
-	return (address - FLASH_BASE) / FLASH_PAGE_SIZE;
-}
-//----------------------------------------------------------------------
-
 // Flash Adress Inhalt validieren
 //----------------------------------------------------------------------
 flash_status flash_validation (uint32_t address, uint8_t *data)
@@ -181,4 +191,14 @@ void flash_jump_to_app (void)
 	__set_MSP(*(volatile uint32_t*)FLASH_APP_START_ADDRESS);
 	jump_to_app();
 }
+//----------------------------------------------------------------------
+
+// Flash Adresse ermitteln
+//----------------------------------------------------------------------
+#ifndef STM32F7
+uint32_t GetPage (uint32_t address)
+{
+	return (address - FLASH_BASE) / FLASH_PAGE_SIZE;
+}
+#endif
 //----------------------------------------------------------------------
