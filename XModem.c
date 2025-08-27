@@ -7,6 +7,7 @@
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader XModem
 // Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/xmodem.c
+//				http://ee6115.mit.edu/amulet/xmodem.htm
 //----------------------------------------------------------------------
 
 // Einfuegen der standard Include-Dateien
@@ -136,8 +137,7 @@ void xmodem_receive (void)
 			case X_ETB:
 			{
 				// Uebertragung beenden
-				uartTransmitChar(X_EOT);
-				uartTransmitChar(X_EOT);
+				uartTransmitChar(X_ACK);
 				
 				// Flash valid Speicher beschreiben
 				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
