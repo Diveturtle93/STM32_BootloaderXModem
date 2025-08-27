@@ -136,8 +136,7 @@ void xmodem_receive (void)
 			case X_ETB:
 			{
 				// Uebertragung beenden
-				uartTransmitChar(X_EOT);
-				uartTransmitChar(X_EOT);
+				uartTransmitChar(X_ACK);
 				
 				// Flash valid Speicher beschreiben
 				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
@@ -302,7 +301,20 @@ xmodem_status xmodem_handle_packet (uint8_t header)
 	}
 
 	// Flashen wenn keine Fehler aufgetreten sind
+#if defined (STM32F1) || defined (STM32G0)
+	// Fuer STM32F1 und G0 wird mit Doubleword geschrieben, daher Teiler durch 8
 	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/8)))
+#endif
+
+#ifdef STM32F7
+	// Fuer STM32F7 wird mit Word geschrieben, daher Teiler durch 4
+	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/4)))
+#endif
+
+#ifdef STM32H7
+	// Fuer STM32H7 werden 32 Byte geschrieben, daher Teiler durch 32
+	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/32)))
+#endif
 	{
 		// Wenn schreiben fehlerhaft, dann FLASH Validation Speicher zuruecksetzen
 		flash_write(FLASH_APP_VALID_ADDRESS, &app_error_array[0], 1);
