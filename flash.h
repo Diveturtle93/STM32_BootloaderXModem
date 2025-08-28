@@ -34,11 +34,11 @@
 
 // Definiere Page oder Sector
 //----------------------------------------------------------------------
-#if defined (STM32F7) || define (STM32H7)
+#if defined (STM32F7) || defined (STM32H7)
 	#define FLASH_SECTOR
 #endif
 
-#if defined (STM32F1) || define (STM32G0)
+#if defined (STM32F1) || defined (STM32G0)
 	#define FLASH_PAGE
 #endif
 //----------------------------------------------------------------------
@@ -69,7 +69,7 @@
 // Flash default Endadresse definieren
 //----------------------------------------------------------------------
 #ifndef FLASH_APP_END_ADDRESS
-	#define FLASH_APP_END_ADDRESS			FLASH_END
+	#define FLASH_APP_END_ADDRESS			0x8010000-1
 #endif
 //----------------------------------------------------------------------
 

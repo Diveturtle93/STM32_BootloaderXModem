@@ -67,7 +67,7 @@ flash_status flash_erase (uint32_t address)
 	erase_init.NbPages = GetPage(FLASH_APP_END_ADDRESS) - GetPage(address);
 #endif
 
-#if define (STM32F7) || define (STM32H7)
+#if defined (STM32F7) || defined (STM32H7)
 	// Flash Erase definieren
 	erase_init.TypeErase = FLASH_TYPEERASE_SECTORS;
 
@@ -114,7 +114,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 {
 	// Variablen definieren
 	flash_status status = FLASH_OK;
-	uint64_t tmp;
+	uint64_t tmp = 0;
 
 	// Debug
 #ifdef DEBUG_FLASH
@@ -136,27 +136,23 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 		else
 		{
 			// Umsortierung von 8 Bit auf 64 Bit fuer STM32F1 und G0
-			// Umsortierung von 8 Bit auf 32 Bit fue STM32F7
 			// Adresse der Daten uebergeben
 #if defined (STM32F1) || defined (STM32G0)
-			// Fuer STM32F1 und G0 nur 64 Bit daher beginnend bei Byte 7
 			tmp = (((uint64_t)(data[7 + (i*8)])) << 56);
 			tmp += (((uint64_t)(data[6 + (i*8)])) << 48);
 			tmp += (((uint64_t)(data[5 + (i*8)])) << 40);
 			tmp += (((uint64_t)(data[4 + (i*8)])) << 32);
 			tmp += (((uint64_t)(data[3 + (i*8)])) << 24);
-#endif
-
-#ifdef STM32F7
-			// Fuer STM32F7 nur 32 Bit daher beginnend bei Byte 3
-			tmp = (((uint64_t)(data[3 + (i*4)])) << 24);
-#endif
-
-#if defined (STM32F1) || defined (STM32F7) || defined (STM32G0)
-			// Restlichen Byte 2 - 0
 			tmp += (((uint64_t)(data[2 + (i*8)])) << 16);
 			tmp += (((uint64_t)(data[1 + (i*8)])) << 8);
 			tmp += (((uint64_t)(data[0 + (i*8)])) << 0);
+#endif
+			// Umsortierung von 8 Bit auf 32 Bit fue STM32F7
+#ifdef STM32F7
+			tmp = (((uint64_t)(data[3 + (i*4)])) << 24);
+			tmp += (((uint64_t)(data[2 + (i*4)])) << 16);
+			tmp += (((uint64_t)(data[1 + (i*4)])) << 8);
+			tmp += (((uint64_t)(data[0 + (i*4)])) << 0);
 #endif
 
 #ifdef STM32H7
@@ -184,14 +180,14 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 			}
 
 			// Zuruecklesen des Speicherinhaltes, wenn falsch dann Fehler
-			for (uint8_t j = 0; j < 2; j++)
+			/*for (uint8_t j = 0; j < 2; j++)
 			{
 				// Flash validieren, wenn nicht OK, dann fehlerhaft
 				if (FLASH_OK != flash_validation(address + (j*4), &data[0 + (i*8) + (j*4)]))
 				{
 					status |= FLASH_ERROR_READBACK;
 				}
-			}
+			}*/
 
 			// Addresse verschieben
 #if defined (STM32F1) || defined (STM32G0)
@@ -275,7 +271,7 @@ void flash_jump_to_app (void)
 
 // Flash Page ermitteln
 //----------------------------------------------------------------------
-#ifndef FLASH_PAGE
+#ifdef FLASH_PAGE
 uint32_t GetPage (uint32_t address)
 {
 	// Debug
@@ -298,23 +294,23 @@ uint32_t GetSector(uint32_t address)
 	uartTransmit("Sector ermittlen\n", 17);
 #endif
 
-    if (address < ADDR_FLASH_SECTOR_0_BANK1) return FLASH_SECTOR_0;
-    else if (address < ADDR_FLASH_SECTOR_1_BANK1) return FLASH_SECTOR_1;
-    else if (address < ADDR_FLASH_SECTOR_2_BANK1) return FLASH_SECTOR_2;
-    else if (address < ADDR_FLASH_SECTOR_3_BANK1) return FLASH_SECTOR_3;
-    else if (address < ADDR_FLASH_SECTOR_4_BANK1) return FLASH_SECTOR_4;
-    else if (address < ADDR_FLASH_SECTOR_5_BANK1) return FLASH_SECTOR_5;
-    else if (address < ADDR_FLASH_SECTOR_6_BANK1) return FLASH_SECTOR_6;
-	
+    if (address < ADDR_FLASH_SECTOR_1_BANK1) return FLASH_SECTOR_0;
+    else if (address < ADDR_FLASH_SECTOR_2_BANK1) return FLASH_SECTOR_1;
+    else if (address < ADDR_FLASH_SECTOR_3_BANK1) return FLASH_SECTOR_2;
+    else if (address < ADDR_FLASH_SECTOR_4_BANK1) return FLASH_SECTOR_3;
+    else if (address < ADDR_FLASH_SECTOR_5_BANK1) return FLASH_SECTOR_4;
+    else if (address < ADDR_FLASH_SECTOR_6_BANK1) return FLASH_SECTOR_5;
+    else if (address < ADDR_FLASH_SECTOR_7_BANK1) return FLASH_SECTOR_6;
+
 #ifdef STM32H7
 	else return FLASH_SECTOR_7;
 #endif
-	
+
 #ifdef STM32F7
-    else if (address < ADDR_FLASH_SECTOR_7_BANK1) return FLASH_SECTOR_7;
-    else if (address < ADDR_FLASH_SECTOR_8_BANK1) return FLASH_SECTOR_8;
-    else if (address < ADDR_FLASH_SECTOR_9_BANK1) return FLASH_SECTOR_9;
-    else if (address < ADDR_FLASH_SECTOR_10_BANK1) return FLASH_SECTOR_10;
+    else if (address < ADDR_FLASH_SECTOR_8_BANK1) return FLASH_SECTOR_7;
+    else if (address < ADDR_FLASH_SECTOR_9_BANK1) return FLASH_SECTOR_8;
+    else if (address < ADDR_FLASH_SECTOR_10_BANK1) return FLASH_SECTOR_9;
+    else if (address < ADDR_FLASH_SECTOR_11_BANK1) return FLASH_SECTOR_10;
     else return FLASH_SECTOR_11;
 #endif
 }

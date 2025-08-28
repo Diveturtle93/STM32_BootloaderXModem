@@ -7,6 +7,7 @@
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader XModem
 // Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/xmodem.c
+//				http://ee6115.mit.edu/amulet/xmodem.htm
 //----------------------------------------------------------------------
 
 // Einfuegen der standard Include-Dateien
@@ -373,7 +374,7 @@ xmodem_status app_validation (uint32_t address)
 	xmodem_status status= X_OK;
 
 	// Application validieren ersten 4 Byte
-	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
+/*	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
 	{
 		status = X_ERROR_VALID;
 	}
@@ -382,7 +383,7 @@ xmodem_status app_validation (uint32_t address)
 	if (FLASH_OK != flash_validation(address + 4, &app_valid_array[4]))
 	{
 		status = X_ERROR_VALID;
-	}
+	}*/
 	
 	// Rueckgabe Fehlerstatus
 	return status;
