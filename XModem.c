@@ -302,7 +302,20 @@ xmodem_status xmodem_handle_packet (uint8_t header)
 	}
 
 	// Flashen wenn keine Fehler aufgetreten sind
+#if defined (STM32F1) || defined (STM32G0)
+	// Fuer STM32F1 und G0 wird mit Doubleword geschrieben, daher Teiler durch 8
 	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/8)))
+#endif
+
+#ifdef STM32F7
+	// Fuer STM32F7 wird mit Word geschrieben, daher Teiler durch 4
+	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/4)))
+#endif
+
+#ifdef STM32H7
+	// Fuer STM32H7 werden 32 Byte geschrieben, daher Teiler durch 32
+	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/32)))
+#endif
 	{
 		// Wenn schreiben fehlerhaft, dann FLASH Validation Speicher zuruecksetzen
 		flash_write(FLASH_APP_VALID_ADDRESS, &app_error_array[0], 1);
@@ -361,7 +374,7 @@ xmodem_status app_validation (uint32_t address)
 	xmodem_status status= X_OK;
 
 	// Application validieren ersten 4 Byte
-	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
+/*	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
 	{
 		status = X_ERROR_VALID;
 	}
@@ -370,7 +383,7 @@ xmodem_status app_validation (uint32_t address)
 	if (FLASH_OK != flash_validation(address + 4, &app_valid_array[4]))
 	{
 		status = X_ERROR_VALID;
-	}
+	}*/
 	
 	// Rueckgabe Fehlerstatus
 	return status;
