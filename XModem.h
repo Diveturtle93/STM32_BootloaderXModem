@@ -57,6 +57,7 @@
 #define X_CAN								18								// Cancel
 #define X_APP								65								// Abort
 #define X_C									67								// ASCII "C" to notify the host, we want to use CRC16
+#define X_A									97								// Abort
 //----------------------------------------------------------------------
 
 // XModem Status definieren
