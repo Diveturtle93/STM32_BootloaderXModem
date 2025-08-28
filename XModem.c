@@ -173,6 +173,7 @@ void xmodem_receive (void)
 
 			// Springe zu vorhandener Application nach Timeout
 			case X_APP:
+			case X_A:
 			{
 				// Zu Application springen
 				uartTransmitChar(X_CAN);
@@ -290,7 +291,7 @@ xmodem_status xmodem_handle_packet (uint8_t header)
 		}
 	}
 
-	// Error Handling und flashen
+	// Datenpaket pruefen, wenn fehlerhaft Fehler ausgeben
 	if (X_OK == status)
 	{
 		if (xmodem_packet_number != receive_packet_number[0])
