@@ -56,6 +56,28 @@ werden. Das Offset hängt von der Startadresse ab.
 #define VECT_TAB_OFFSET         0x00008000U
 ```
 
+## Verwendung
+
+Die Nutzung der Bibliothek für den XModem-Bootloader bnötigt nur folgende drei Schritte. Sie muss
+im Projekt eingebunden werden, damit der Compiler weiß, wo er die Daten findet. Dann muss im
+Programm der Header-File
+
+```C
+#include "Xmodem.h"
+```
+
+eingebunden werden. Dies passiert am besten in der main.c. Als letztes wird dann in der
+main-Funktion noch die Funktion
+
+```C
+xmodem_receive();
+```
+
+aufgerufen. Für eine endlose Schleife muss dies in der while(1) passieren. Diese prüft, ob auf
+dem Mikrocontroller schon eine Application vorhanden ist. Sollte dies der Fall sein, springt sie
+automatisch nach einem Timeout von ca. 100s in die Application. Wird keine Application gefunden,
+wartet die Funktion dauerhaft auf einen upload.
+
 ---
 
 ## Einführung

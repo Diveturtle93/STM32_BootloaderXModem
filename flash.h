@@ -76,15 +76,15 @@
 //----------------------------------------------------------------------
 #ifndef FLASH_APP_END_ADDRESS
 #if defined (STM32F1) || defined (STM32H7)
-	#define FLASH_APP_END_ADDRESS			0x8040000-1
+	#define FLASH_APP_END_ADDRESS			0x8040000-1						// Flash Endadresse fuer Application beim STM32F1 und STM32H7
 #endif
 
 #ifdef STM32F7
-	#define FLASH_APP_END_ADDRESS			0x8010000-1
+	#define FLASH_APP_END_ADDRESS			0x8010000-1						// Flash Endadresse fuer Application beim STM32F7
 #endif
 
 #ifdef STM32G0
-	#define FLASH_APP_END_ADDRESS			0x8020000-1
+	#define FLASH_APP_END_ADDRESS			0x8020000-1						// Flash Endadresse fuer Application beim STM32G0
 #endif
 #endif
 //----------------------------------------------------------------------
