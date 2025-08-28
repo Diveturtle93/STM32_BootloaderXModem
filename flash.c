@@ -276,7 +276,7 @@ uint32_t GetPage (uint32_t address)
 {
 	// Debug
 #ifdef DEBUG_FLASH
-	uartTransmit("Page ermittlen\n", 15);
+	uartTransmit("Page ermitteln\n", 15);
 #endif
 
 	return (address - FLASH_BASE) / FLASH_PAGE_SIZE;
@@ -291,7 +291,7 @@ uint32_t GetSector(uint32_t address)
 {
 	// Debug
 #ifdef DEBUG_FLASH
-	uartTransmit("Sector ermittlen\n", 17);
+	uartTransmit("Sector ermitteln\n", 17);
 #endif
 
     if (address < ADDR_FLASH_SECTOR_1_BANK1) return FLASH_SECTOR_0;
