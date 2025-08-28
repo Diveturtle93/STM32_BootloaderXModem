@@ -54,7 +54,7 @@ void xmodem_receive (void)
 	// Application valid
 	app_valid = app_validation(FLASH_APP_VALID_ADDRESS);
 	// Wenn Application Fehlerhaft oder nicht installiert
-	if (X_ERROR_VALID == app_valid)
+	if (X_OK != app_valid)
 	{
 		// Keine App vorhanden
 		app_valid = false;
@@ -387,7 +387,7 @@ xmodem_status app_validation (uint32_t address)
 	xmodem_status status= X_OK;
 
 	// Application validieren ersten 4 Byte
-/*	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
+	if (FLASH_OK != flash_validation(address, &app_valid_array[0]))
 	{
 		status = X_ERROR_VALID;
 	}
@@ -396,7 +396,7 @@ xmodem_status app_validation (uint32_t address)
 	if (FLASH_OK != flash_validation(address + 4, &app_valid_array[4]))
 	{
 		status = X_ERROR_VALID;
-	}*/
+	}
 	
 	// Rueckgabe Fehlerstatus
 	return status;
