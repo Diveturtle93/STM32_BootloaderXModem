@@ -7,14 +7,18 @@ den Mikrocontroller aufgespielt werden.
 
 ## Aktuell unterstützt
 
-Folgende Mikrocontroller werden vom Bootloader unterstützt, dabei wird nur Bank1 verwendet:
+Folgende Mikrocontroller werden vom Bootloader unterstützt, dabei wird jedoch nur Bank1 verwendet.
+Ebenfalls wird nicht bei jedem Mikrocontroller der gesamte Speicher der zur Verfügung steht
+genutzt. 
 
-| µC | Startadresse | Endadresse | Bank | Speicher |
-|:-- |:------------ |:---------- |:---- |:--------:|
-| F105 | 0x08008000 | 0x0803FFFF | Bank1 | 256kB |
-| G071 | 0x08008000 | 0x0801FFFF | Bank1 | 128kB |
+| µC | Startadresse | Endadresse | Bank | Speicher | Bootloader | Application |
+|:-- |:------------ |:---------- |:---- |:--------:|:----------:|:-----------:|
+| F105 | 0x08008000 | 0x0803FFFF | Bank1 | 256kB | 32kB | 224kB |
+| F767 | 0x08008000 | 0x0800FFFF | Bank1 | 2048kB | 32kB | 32kB |
+| G071 | 0x08008000 | 0x0801FFFF | Bank1 | 128kB | 32kB | 96kB |
+| H743 | 0x08020000 | 0x0803FFFF | Bank1 | 2048kB | 128kB | 128kB |
 
-Standardmäßig ist werden die Start- und Endadresse im Programm gesetzt. Diese Werte können aber
+Standardmäßig werden die Start- und Endadresse im Programm gesetzt. Diese Werte können aber
 jeweils im eigenen Programmcode vordefiniert werden. Dabei können dann drei defines gesetzt werden.
 
 	- FLASH_APP_START_ADDRESS	: Gibt die Startadresse der Application an
