@@ -139,8 +139,20 @@ void xmodem_receive (void)
 				// Uebertragung beenden
 				uartTransmitChar(X_ACK);
 				
+#if defined (STM32F1) || defined (STM32G0)
 				// Flash valid Speicher beschreiben
 				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
+#endif
+
+#ifdef STM32F7
+				// Flash valid Speicher beschreiben
+				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 2);
+#endif
+
+#ifdef STM32H7
+				// Flash valid Speicher beschreiben
+				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
+#endif
 				
 				// Zu Application springen
 				uartTransmit("\nFirmware geupdated!\n", 21);

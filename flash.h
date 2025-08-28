@@ -64,7 +64,7 @@
 #endif
 
 #ifdef STM32F7
-	#define FLASH_APP_VALID_ADDRESS			(0x800FFE0)						// Flash Speicheradresse, wenn Application installed und valid beim STM32H7
+	#define FLASH_APP_VALID_ADDRESS			(0x800FFF8)						// Flash Speicheradresse, wenn Application installed und valid beim STM32F7
 #endif
 
 #ifdef STM32H7

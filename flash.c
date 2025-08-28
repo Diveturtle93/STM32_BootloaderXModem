@@ -162,7 +162,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 			
 			// Flashen, falls Fehler wird dieser ausgegeben
 #if defined (STM32F1) || defined (STM32G0)
-			// Doubleword 64Bit fuer STM32G071 notwendig
+			// STM32F1 und STM32G071 wird mit 64Bit geflashed, fuer G071 notwendig
 			if (HAL_OK != HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, tmp))
 #endif
 
@@ -180,14 +180,35 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 			}
 
 			// Zuruecklesen des Speicherinhaltes, wenn falsch dann Fehler
-			/*for (uint8_t j = 0; j < 2; j++)
+#if defined (STM32F1) || defined (STM32G0)
+			for (uint8_t j = 0; j < 2; j++)
 			{
 				// Flash validieren, wenn nicht OK, dann fehlerhaft
 				if (FLASH_OK != flash_validation(address + (j*4), &data[0 + (i*8) + (j*4)]))
 				{
 					status |= FLASH_ERROR_READBACK;
 				}
-			}*/
+			}
+#endif
+
+#ifdef STM32F7
+			// Flash validieren, wenn nicht OK, dann fehlerhaft
+			if (FLASH_OK != flash_validation(address, &data[0 + (i*4)]))
+			{
+				status |= FLASH_ERROR_READBACK;
+			}
+#endif
+
+#ifdef STM32H7
+			for (uint8_t j = 0; j < 8; j++)
+			{
+				// Flash validieren, wenn nicht OK, dann fehlerhaft
+				if (FLASH_OK != flash_validation(address + (j*4), &data[0 + (i*32) + (j*4)]))
+				{
+					status |= FLASH_ERROR_READBACK;
+				}
+			}
+#endif
 
 			// Addresse verschieben
 #if defined (STM32F1) || defined (STM32G0)
