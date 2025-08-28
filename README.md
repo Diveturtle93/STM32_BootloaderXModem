@@ -5,7 +5,54 @@ Dafür wird auf einem UART die serielle Schnittstelle zur Verfügung gestellt. M
 welches den XModem-Transfer unterstützt, z.B. TeraTerm, kann dann eine neue Application auf
 den Mikrocontroller aufgespielt werden.
 
+## Aktuell unterstützt
 
+Folgende Mikrocontroller werden vom Bootloader unterstützt, dabei wird nur Bank1 verwendet:
+
+| µC | Startadresse | Endadresse | Bank | Speicher |
+|:-- |:------------ |:---------- |:---- |:--------:|
+| F105 | 0x08008000 | 0x0803FFFF | Bank1 | 256kB |
+| G071 | 0x08008000 | 0x0801FFFF | Bank1 | 128kB |
+
+Standardmäßig ist werden die Start- und Endadresse im Programm gesetzt. Diese Werte können aber
+jeweils im eigenen Programmcode vordefiniert werden. Dabei können dann drei defines gesetzt werden.
+
+	- FLASH_APP_START_ADDRESS	: Gibt die Startadresse der Application an
+	- FLASH_APP_END_ADDRESS		: Setzt die Endadresse der Application
+	- FLASH_APP_VALID_ADDRESS	: Wird benötigt, um eine vorhanden App zu erkennen
+
+
+## Application
+
+Bei der Application muss dann in der STM32xxx_Flash.ld noch folgende Anpassung geamacht werden.
+
+```C
+MEMORY
+{
+  RAM		(xrw)	: ORIGIN = 0x20000000,	LENGTH = 36K
+  FLASH		(rx)	: ORIGIN = 0x8008000,	LENGTH = 96K
+}
+```
+
+Die Länge hängt hierbei von der Größe des Speichers sowie der Startadresse ab. Unterschiedliche
+Mikrocontroller haben eine unterschiedliche Größe. Je nach Startadresse wird der noch zur
+Verfügung stehende Speicher ebenfalls kleiner.
+
+Eine weitere Anpassung ist in der system_stm32xxx.c notwendig. Hier muss die Vector-Tabelle
+angepasst werden. Zudem muss sie aktiviert sein. Dafür wird nach dem Kommentar
+
+```C
+#define USER_VECT_TAB_ADDRESS
+```
+
+gesucht und die Kommentierung aufgehoben. Direkt darunter muss dann noch das Offset festgelegt
+werden. Das Offset hängt von der Startadresse ab.
+
+```C
+#define VECT_TAB_OFFSET         0x00008000U
+```
+
+---
 
 ## Einführung
 
