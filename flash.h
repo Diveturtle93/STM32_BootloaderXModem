@@ -59,9 +59,13 @@
 // Darf bei Mikrocontrollern mit Sectoren nicht im selben Sector wie Bootloader liegen.
 //----------------------------------------------------------------------
 #ifndef FLASH_APP_VALID_ADDRESS
-#ifndef STM32H7
+#if defined (STM32F1) || defined (STM32G0)
 	#define FLASH_APP_VALID_ADDRESS			(0x8007FF8)						// Flash Speicheradresse, wenn Application installed und valid
-#else
+#endif
+#ifdef STM32F7
+	#define FLASH_APP_VALID_ADDRESS			(0x800FFF8)						// Flash Speicheradresse, wenn Application installed und valid beim STM32F7
+#endif
+#ifdef STM32H7
 	#define FLASH_APP_VALID_ADDRESS			(0x803FFE0)						// Flash Speicheradresse, wenn Application installed und valid beim STM32H7
 #endif
 #endif
@@ -69,7 +73,15 @@
 // Flash default Endadresse definieren
 //----------------------------------------------------------------------
 #ifndef FLASH_APP_END_ADDRESS
-	#define FLASH_APP_END_ADDRESS			0x8010000-1
+#if defined (STM32F1) || defined (STM32G0)
+	#define FLASH_APP_END_ADDRESS			(0x8020000) - 1					// Flash Speicheradresse, wenn Application installed und valid
+#endif
+#ifdef STM32F7
+	#define FLASH_APP_END_ADDRESS			(0x8010000) - 1					// Flash Speicheradresse, wenn Application installed und valid beim STM32F7
+#endif
+#ifdef STM32H7
+	#define FLASH_APP_END_ADDRESS			(0x8040000) - 1					// Flash Speicheradresse, wenn Application installed und valid beim STM32H7
+#endif
 #endif
 //----------------------------------------------------------------------
 
