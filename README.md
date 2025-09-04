@@ -25,17 +25,14 @@ jeweils im eigenen Programmcode vordefiniert werden. Dabei können dann drei def
 	- FLASH_APP_END_ADDRESS		: Setzt die Endadresse der Application
 	- FLASH_APP_VALID_ADDRESS	: Wird benötigt, um eine vorhanden App zu erkennen
 
-
 ## Application
 
-Bei der Application muss dann in der STM32xxx_Flash.ld noch folgende Anpassung geamacht werden.
+Bei der Application muss dann in der STM32xxx_Flash.ld noch die folgende Zeile angepasst werden.
+Hier muss ebenfalls die Startadresse der Application eingetragen werden. So ist hier die
+Standardadresse 0x8000000 zu tauschen. Dabei muss der neue Wert ein vielfaches von 0x200 sein.
 
 ```C
-MEMORY
-{
-  RAM		(xrw)	: ORIGIN = 0x20000000,	LENGTH = 36K
-  FLASH		(rx)	: ORIGIN = 0x8008000,	LENGTH = 96K
-}
+FLASH		(rx)	: ORIGIN = 0x8000000,	LENGTH = 96K
 ```
 
 Die Länge hängt hierbei von der Größe des Speichers sowie der Startadresse ab. Unterschiedliche
@@ -50,7 +47,8 @@ angepasst werden. Zudem muss sie aktiviert sein. Dafür wird nach dem Kommentar
 ```
 
 gesucht und die Kommentierung aufgehoben. Direkt darunter muss dann noch das Offset festgelegt
-werden. Das Offset hängt von der Startadresse ab.
+werden. Das Offset hängt von der Startadresse ab. Die folgende Zeile ist nur exemplarisch und
+setzt mit dem gezeigten Offset die Startadresse der neuen Vectortabelle auf 0x08008000.
 
 ```C
 #define VECT_TAB_OFFSET         0x00008000U

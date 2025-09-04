@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// Titel	:	XModem.c
+// Titel	:	xmodem.c
 //----------------------------------------------------------------------
 // Sprache	:	C
 // Datum	:	16.05.2025
@@ -22,9 +22,9 @@
 
 // Einfuegen der eigenen Include Dateien
 //----------------------------------------------------------------------
-#include "XModem.h"
-#include "BasicUart.h"
+#include "basicuart.h"
 #include "flash.h"
+#include "xmodem.h"
 //----------------------------------------------------------------------
 
 // Variablen definieren
