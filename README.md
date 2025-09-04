@@ -24,6 +24,7 @@ jeweils im eigenen Programmcode vordefiniert werden. Dabei können dann drei def
 	- FLASH_APP_START_ADDRESS	: Gibt die Startadresse der Application an
 	- FLASH_APP_END_ADDRESS		: Setzt die Endadresse der Application
 	- FLASH_APP_VALID_ADDRESS	: Wird benötigt, um eine vorhanden App zu erkennen
+	- FLASH_APP_CONFIG_ADDRESS	: Kann für Konfigurierungen verwendet werden
 
 ## Application
 
