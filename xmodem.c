@@ -175,11 +175,21 @@ void xmodem_receive (void)
 			case X_APP:
 			case X_A:
 			{
-				// Zu Application springen
-				uartTransmitChar(X_CAN);
-				uartTransmit("\nApplication vorhanden.\n", 24);
-				uartTransmit("Springe zu Benutzer Application...\n", 35);
-				flash_jump_to_app();
+				// Abfrage ob Application vorhanden und valide
+				if (X_OK == app_validation(FLASH_APP_VALID_ADDRESS))
+				{
+					// Zu Application springen
+					uartTransmitChar(X_CAN);
+					uartTransmit("\nApplication vorhanden.\n", 24);
+					uartTransmit("Springe zu Benutzer Application...\n", 35);
+					flash_jump_to_app();
+				}
+				else
+				{
+					// Application nicht vorhanden oder nicht valide
+					uartTransmitString("\nSprung zu Application nicht moeglich.\n");
+					uartTransmitString("Bootloader ueberspringt Anweisung und wartet weiter auf upload der Application");
+				}
 				break;
 			}
 
