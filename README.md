@@ -76,7 +76,18 @@ dem Mikrocontroller schon eine Application vorhanden ist. Sollte dies der Fall s
 automatisch nach einem Timeout von ca. 100s in die Application. Wird keine Application gefunden,
 wartet die Funktion dauerhaft auf einen upload.
 
----
+## Timeout & Abort
+
+Der Bootloader verfügt über zwei Möglichkeiten diesen wieder zu verlassen. Dafür wird ein
+Timeout abgefragt. Ist eine gewisse Zeit überschritten, so wird der Bootloader verlassen.
+Ebenfalls ist es möglich den Bootloader manuel zu beenden. Dies geht nur wenn der Bootloader
+auf eine Application wartet.
+
+Bei beiden Methoden, bevor die Application angesprungen wird, wird geprüft, ob eine Application
+schon vorhanden ist. Diese wird dann ebenfalls validiert. Ist eine valide Software verfügbar,
+so wird diese ausgeführt. Sollte keine verfügbar sein, so wird weiter auf einen Upload gewartet.
+
+##
 
 ## Einführung
 
