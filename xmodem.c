@@ -167,6 +167,13 @@ void xmodem_receive (void)
 				// Übertragung abbrechen
 				uartTransmitChar(X_CAN);
 				uartTransmitChar(X_CAN);
+				
+				// Flash loeschen wenn upload abgebrochen wird
+				flash_erase(FLASH_APP_START_ADDRESS);
+				
+				// Wenn Upload abgebrochen, FLASH Validation Speicher zuruecksetzen
+				flash_write(FLASH_APP_VALID_ADDRESS, &app_error_array[0], 1);
+				
 				status = X_ERROR;
 				break;
 			}
