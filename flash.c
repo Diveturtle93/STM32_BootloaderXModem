@@ -21,11 +21,12 @@
 
 // Einfuegen der eigenen Include Dateien
 //----------------------------------------------------------------------
-#include "flash.h"
-
 #ifdef DEBUG_FLASH
-	#include "BasicUart.h"
+	#include "basicuart.h"
 #endif
+
+#include "flash.h"
+#include "stmflash_config.h"
 //----------------------------------------------------------------------
 
 // Definiere Typedefines
