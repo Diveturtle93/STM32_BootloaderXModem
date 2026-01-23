@@ -165,7 +165,7 @@ void xmodem_receive (void)
 			// Abbruch vom Host
 			case X_CAN:
 			{
-				// Übertragung abbrechen
+				// Uebertragung abbrechen
 				uartTransmitChar(X_CAN);
 				uartTransmitChar(X_CAN);
 				
@@ -223,7 +223,7 @@ uint16_t xmodem_calc_crc (uint8_t *data, uint16_t length)
 		{
 			if (crc & 0x8000)
 			{
-				crc = (crc << 1) ^ 0x1021;
+				crc = (crc << 1) ^ CRC_POLY;
 			}
 			else
 			{
