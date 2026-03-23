@@ -32,7 +32,7 @@
 
 // Definiere Page oder Sector
 //----------------------------------------------------------------------
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 	#define FLASH_PAGE
 #endif
 
@@ -58,6 +58,11 @@
 	#define FLASH_APP_START_ADDRESS			0x8008000						// Flash Startadresse fuer Application beim STM32G0
 #endif
 
+#ifdef STM32G4
+// Dual Bank for STM32G474RE6
+	#define FLASH_APP_START_ADDRESS			0x8008000						// Flash Startadresse fuer Application beim STM32G4
+#endif
+
 #ifdef STM32H7
 	#define FLASH_APP_START_ADDRESS			0x8020000						// Flash Startadresse fuer Application beim STM32H7
 #endif
@@ -67,12 +72,21 @@
 // Darf bei Mikrocontrollern mit Sectoren nicht im selben Sector wie Bootloader liegen.
 //----------------------------------------------------------------------
 #ifndef FLASH_APP_VALID_ADDRESS
-#if defined (STM32F1) || defined (STM32G0)
-	#define FLASH_APP_VALID_ADDRESS			0x8007FF8						// Flash Speicheradresse, wenn Application installed und valid
+#ifdef STM32F1
+	#define FLASH_APP_VALID_ADDRESS			0x8007FF8						// Flash Speicheradresse, wenn Application installed und valid beim STM32F1
 #endif
 
 #ifdef STM32F7
 	#define FLASH_APP_VALID_ADDRESS			0x800FFF8						// Flash Speicheradresse, wenn Application installed und valid beim STM32F7
+#endif
+
+#ifdef STM32G0
+	#define FLASH_APP_VALID_ADDRESS			0x8007FF8						// Flash Speicheradresse, wenn Application installed und valid beim STM32G0
+#endif
+
+#ifdef STM32G4
+// Dual Bank for STM32G474RE6
+	#define FLASH_APP_VALID_ADDRESS			0x8007FF8						// Flash Speicheradresse, wenn Application installed und valid beim STM32G4
 #endif
 
 #ifdef STM32H7
@@ -82,7 +96,7 @@
 //----------------------------------------------------------------------
 // Flash Konfiguration Adresse definieren
 //----------------------------------------------------------------------
-#ifndef FLASH_APP_CONFIG_ADDRESS
+##ifndef FLASH_APP_CONFIG_ADDRESS
 #ifdef STM32F1
 	#define FLASH_APP_CONFIG_ADDRESS		0x8038000						// Flash Speicheradresse fuer Konfiguration beim STM32F1
 #endif
@@ -93,6 +107,11 @@
 
 #ifdef STM32G0
 	#define FLASH_APP_CONFIG_ADDRESS		0x8018000						// Flash Speicheradresse fuer Konfiguration beim STM32G0
+#endif
+
+#ifdef STM32G4
+// Dual Bank for STM32G474RE6
+	#define FLASH_APP_CONFIG_ADDRESS		0x8038000						// Flash Speicheradresse fuer Konfiguration beim STM32G4
 #endif
 
 #ifdef STM32H7
@@ -108,11 +127,16 @@
 #endif
 
 #ifdef STM32F7
-	#define FLASH_APP_END_ADDRESS			(0x8200000 - 1)					// Flash Endadresse fuer Application beim STM32F7 
+	#define FLASH_APP_END_ADDRESS			(0x8200000 - 1)					// Flash Endadresse fuer Application beim STM32F7
 #endif
 
 #ifdef STM32G0
 	#define FLASH_APP_END_ADDRESS			(0x8020000 - 1)					// Flash Endadresse fuer Application beim STM32G0
+#endif
+
+#ifdef STM32G4
+// Dual Bank for STM32G474RE6
+	#define FLASH_APP_END_ADDRESS			(0x8040000 - 1)					// Flash Endadresse fuer Application beim STM32G4
 #endif
 
 #ifdef STM32H7
@@ -129,11 +153,16 @@
 #endif
 
 #ifdef STM32F7
-	#define FLASH_SIZE						(128 * 1024)					// Flash Size 128kB fuer STM32F7 
+	#define FLASH_SIZE						(128 * 1024)					// Flash Size 128kB fuer STM32F7
 #endif
 
 #ifdef STM32G0
 	#define FLASH_SIZE						(128 * 1024)					// Flash Size 128kB fuer STM32G0
+#endif
+
+#ifdef STM32G4
+// Dual Bank for STM32G474RE6
+	#define FLASH_SIZE						(256 * 1024)					// Flash Size 256kB fuer STM32G4
 #endif
 
 #ifdef STM32H7

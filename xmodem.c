@@ -140,7 +140,7 @@ void xmodem_receive (void)
 				// Uebertragung beenden
 				uartTransmitChar(X_ACK);
 				
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 				// Flash valid Speicher beschreiben
 				flash_write(FLASH_APP_VALID_ADDRESS, &app_valid_array[0], 1);
 #endif
@@ -323,7 +323,7 @@ xmodem_status xmodem_handle_packet (uint8_t header)
 	}
 
 	// Flashen wenn keine Fehler aufgetreten sind
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 	// Fuer STM32F1 und G0 wird mit Doubleword geschrieben, daher Teiler durch 8
 	if ((X_OK == status) && (FLASH_OK != flash_write(xmodem_actual_flash_address, &receive_packet_data[0], (uint32_t)size/8)))
 #endif

@@ -55,7 +55,7 @@ flash_status flash_erase (uint32_t address)
 	// Flash initialisieren
 	erase_init.Banks = FLASH_BANK_1;
 
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 	// Flash Erase definieren
 	erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
 #endif
@@ -82,7 +82,7 @@ flash_status flash_erase (uint32_t address)
 	erase_init.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 #endif
 
-#ifdef STM32G0
+#if defined (STM32G0) || defined (STM32G4)
 	// Flash Page ermitteln
 	erase_init.Page = GetPage(address);
 	
@@ -138,7 +138,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 		{
 			// Umsortierung von 8 Bit auf 64 Bit fuer STM32F1 und G0
 			// Adresse der Daten uebergeben
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 			tmp = (((uint64_t)(data[7 + (i*8)])) << 56);
 			tmp += (((uint64_t)(data[6 + (i*8)])) << 48);
 			tmp += (((uint64_t)(data[5 + (i*8)])) << 40);
@@ -162,7 +162,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 #endif
 			
 			// Flashen, falls Fehler wird dieser ausgegeben
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 			// STM32F1 und STM32G071 wird mit 64Bit geflashed, fuer G071 notwendig
 			if (HAL_OK != HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, tmp))
 #endif
@@ -181,7 +181,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 			}
 
 			// Zuruecklesen des Speicherinhaltes, wenn falsch dann Fehler
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 			for (uint8_t j = 0; j < 2; j++)
 			{
 				// Flash validieren, wenn nicht OK, dann fehlerhaft
@@ -212,7 +212,7 @@ flash_status flash_write (uint32_t address, uint8_t *data, uint32_t length)
 #endif
 
 			// Addresse verschieben
-#if defined (STM32F1) || defined (STM32G0)
+#if defined (STM32F1) || defined (STM32G0) || defined (STM32G4)
 			address += 8;													// Fuer STM32F1 und STM32G0
 #endif
 
