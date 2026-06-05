@@ -1,184 +1,196 @@
 # STM32 Bootloader XModem
-
-Der Bootloader verwendet das XModem Protocoll zur Übertragung des neuen Application Quellcodes.
-Dafür wird auf einem UART die serielle Schnittstelle zur Verfügung gestellt. Mit einem Programm,
-welches den XModem-Transfer unterstützt, z.B. TeraTerm, kann dann eine neue Application auf
-den Mikrocontroller aufgespielt werden.
-
-## Aktuell unterstützt
-
-Folgende Mikrocontroller werden vom Bootloader unterstützt, dabei wird jedoch nur Bank1 verwendet.
-Ebenfalls wird nicht bei jedem Mikrocontroller der gesamte Speicher der zur Verfügung steht
-genutzt. 
-
-| µC | Startadresse | Endadresse | Bank | Speicher | Bootloader | Application |
-|:-- |:------------ |:---------- |:---- |:--------:|:----------:|:-----------:|
-| F105 | 0x08008000 | 0x0803FFFF | Bank1 | 256kB | 32kB | 224kB |
-| F767 | 0x08008000 | 0x0800FFFF | Bank1 | 2048kB | 32kB | 32kB |
-| G071 | 0x08008000 | 0x0801FFFF | Bank1 | 128kB | 32kB | 96kB |
-| H743 | 0x08020000 | 0x0803FFFF | Bank1 | 2048kB | 128kB | 128kB |
-
-Standardmäßig werden die Start- und Endadresse im Programm gesetzt. Diese Werte können aber
-jeweils im eigenen Programmcode vordefiniert werden. Dabei können dann drei defines gesetzt werden.
-
-	- FLASH_APP_START_ADDRESS	: Gibt die Startadresse der Application an
-	- FLASH_APP_END_ADDRESS		: Setzt die Endadresse der Application
-	- FLASH_APP_VALID_ADDRESS	: Wird benötigt, um eine vorhanden App zu erkennen
-
-## Application
-
-Bei der Application muss dann in der STM32xxx_Flash.ld noch die folgende Zeile angepasst werden.
-Hier muss ebenfalls die Startadresse der Application eingetragen werden. So ist hier die
-Standardadresse 0x8000000 zu tauschen. Dabei muss der neue Wert ein vielfaches von 0x200 sein.
-
-```C
-FLASH		(rx)	: ORIGIN = 0x8000000,	LENGTH = 96K
-```
-
-Die Länge hängt hierbei von der Größe des Speichers sowie der Startadresse ab. Unterschiedliche
-Mikrocontroller haben eine unterschiedliche Größe. Je nach Startadresse wird der noch zur
-Verfügung stehende Speicher ebenfalls kleiner.
-
-Eine weitere Anpassung ist in der system_stm32xxx.c notwendig. Hier muss die Vector-Tabelle
-angepasst werden. Zudem muss sie aktiviert sein. Dafür wird nach dem Kommentar
-
-```C
-#define USER_VECT_TAB_ADDRESS
-```
-
-gesucht und die Kommentierung aufgehoben. Direkt darunter muss dann noch das Offset festgelegt
-werden. Das Offset hängt von der Startadresse ab. Die folgende Zeile ist nur exemplarisch und
-setzt mit dem gezeigten Offset die Startadresse der neuen Vectortabelle auf 0x08008000.
-
-```C
-#define VECT_TAB_OFFSET         0x00008000U
-```
-
-## Verwendung
-
-Die Nutzung der Bibliothek für den XModem-Bootloader bnötigt nur folgende drei Schritte. Sie muss
-im Projekt eingebunden werden, damit der Compiler weiß, wo er die Daten findet. Dann muss im
-Programm der Header-File
-
-```C
-#include "Xmodem.h"
-```
-
-eingebunden werden. Dies passiert am besten in der main.c. Als letztes wird dann in der
-main-Funktion noch die Funktion
-
-```C
-xmodem_receive();
-```
-
-aufgerufen. Für eine endlose Schleife muss dies in der while(1) passieren. Diese prüft, ob auf
-dem Mikrocontroller schon eine Application vorhanden ist. Sollte dies der Fall sein, springt sie
-automatisch nach einem Timeout von ca. 100s in die Application. Wird keine Application gefunden,
-wartet die Funktion dauerhaft auf einen upload.
-
-## Timeout & Abort
-
-Der Bootloader verfügt über zwei Möglichkeiten diesen wieder zu verlassen. Dafür wird ein
-Timeout abgefragt. Ist eine gewisse Zeit überschritten, so wird der Bootloader verlassen.
-Ebenfalls ist es möglich den Bootloader manuel zu beenden. Dies geht nur wenn der Bootloader
-auf eine Application wartet.
-
-Bei beiden Methoden, bevor die Application angesprungen wird, wird geprüft, ob eine Application
-schon vorhanden ist. Diese wird dann ebenfalls validiert. Ist eine valide Software verfügbar,
-so wird diese ausgeführt. Sollte keine verfügbar sein, so wird weiter auf einen Upload gewartet.
-
-##
-
-## Einführung
-
-Das Xmodem-Protokoll wurde vor Jahren entwickelt, um die Kommunikation zwischen zwei Computern
-zu vereinfachen. Dank seines Halbduplex-Betriebs, 128-Byte-Paketen, ACK/NACK-Antworten und
-CRC-Datenprüfung hat das Xmodem-Protokoll Einzug in viele Anwendungen gehalten. Tatsächlich
-verfügen die meisten modernen PC-Kommunikationspakete über ein Xmodem-Protokoll.
-
-
-## Funktionstheorie
-
-Xmodem ist ein Halbduplex-Kommunikationsprotokoll. Der Empfänger bestätigt nach dem Empfang eines
-Pakets dieses entweder (ACK) oder nicht (NAK). Die CRC-Erweiterung des ursprünglichen Protokolls
-verwendet einen robusteren 16-Bit-CRC zur Validierung des Datenblocks und wird hier verwendet.
-Xmodem ist empfängergesteuert. Das heißt, der Empfänger sendet ein „C“ an den Sender, um seine
-Empfangsbereitschaft im CRC-Modus anzuzeigen. Der Sender sendet dann ein 133 Byte langes Paket.
-Der Empfänger validiert es und antwortet mit einem ACK oder NAK. Anschließend sendet der Sender
-entweder das nächste Paket oder das letzte Paket erneut. Dieser Vorgang wird fortgesetzt, bis der
-Empfänger ein EOT empfängt und es dem Sender ordnungsgemäß bestätigt. Nach dem ersten Handshake
-steuert der Empfänger den Datenfluss durch ACK und NAK an den Sender.
-
-| Byte 1 | Byte 2 | Byte 3 | Byte 4 - 131 | Byte 132 - 133 |
-|:------ |:------ |:------ |:------------ |:-------------- |
-| Start of Header | Packet Number | (Packet Number) | Packet Data | 16-bit CRC |
-
-Tabelle 1. XmodemCRC Paketformat
-
-## Definitions
-
-Die folgenden Definitionen werden für die Protokollflusssteuerung verwendet.
-
-| Symbol | Description | Value |
-|:------ |:----------- |:-----:|
-| SOH | Start of Header | 0x01 |
-| EOT | End of Transmission | 0x04 |
-| ACK | Acknowledge | 0x06 |
-| NAK | Not Acknowledge | 0x15 |
-| ETB | End of Transmission Block (Return to Amulet OS mode) | 0x17 |
-| CAN | Cancel (Force receiver to start sending C's) | 0x18 |
-| C | ASCII “C” | 0x43 |
-
-Byte 1 des XmodemCRC-Pakets kann nur die Werte SOH, EOT, CAN oder ETB annehmen. Alles andere ist
-ein Fehler. Bytes 2 und 3 bilden eine Paketnummer mit Prüfsumme. Addiert man die beiden Bytes, ergibt
-sich immer 0xff. Bitte beachten Sie, dass die Paketnummer bei 1 beginnt und auf 0 zurückgesetzt wird,
-wenn mehr als 255 Pakete empfangen werden. Die Bytes 4–131 bilden das Datenpaket und können beliebig
-sein. Die Bytes 132 und 133 bilden den 16-Bit-CRC. Das High-Byte des CRC befindet sich in Byte 132.
-Der CRC wird nur anhand der Datenpaketbytes (4–131) berechnet.
-
-## Synchronisation
-
-Der Empfänger sendet zunächst ein ASCII-Zeichen „C“ (0x43) an den Sender, um die Verwendung der
-CRC-Blockvalidierung zu signalisieren. Nach dem Senden des ersten „C“ wartet der Empfänger entweder
-auf eine 3-sekündige Zeitüberschreitung oder bis ein Puffer-voll-Flag gesetzt wird. Tritt eine
-Zeitüberschreitung beim Empfänger auf, wird ein weiteres „C“ an den Sender gesendet, und die 3-sekündige
-Zeitüberschreitung beginnt erneut. Dieser Vorgang wird fortgesetzt, bis der Empfänger ein vollständiges
-133-Byte-Paket empfängt.
-
-## Hinweise zum Empfänger
-
-Dieses Protokoll erkennt folgende Bedingungen: 1. Framing-Fehler bei einem beliebigen Byte, 2.
-Überlauffehler bei einem beliebigen Byte, 3. Doppeltes Paket, 4. CRC-Fehler, 5. Zeitüberschreitung
-beim Empfänger (Paket nicht innerhalb von 1 Sekunde empfangen). Bei jeder NAK sendet der Sender das
-letzte Paket erneut. Die Punkte 1 und 2 sind als schwerwiegende Hardwarefehler zu betrachten. Stellen
-Sie sicher, dass Sender und Empfänger dieselbe Baudrate sowie dieselben Start- und Stoppbits verwenden.
-Punkt 3 besteht normalerweise darin, dass der Sender ein verstümmeltes ACK erhält und das Paket erneut
-sendet. Punkt 4 tritt in lauten Umgebungen auf. Und das letzte Problem sollte sich selbst korrigieren,
-nachdem der Empfänger dem Sender ein NAK erteilt hat.
-
-![Flowchart](./xFlow1.gif)
-
-## Sample crc calculation code
-
+ 
+Ein in C implementierter UART-Bootloader für STM32-Mikrocontroller, der das
+XModem-CRC-Protokoll zur Übertragung einer neuen Firmware verwendet. Mit einem
+Terminal-Programm wie TeraTerm kann eine neue Application bequem über die
+serielle Schnittstelle aufgespielt werden, ohne dass ein Programmer oder
+Debugger angeschlossen sein muss.
+ 
+Die Bibliothek basiert auf dem Projekt von [ferenc-nemeth/stm32-bootloader](https://github.com/ferenc-nemeth/stm32-bootloader)
+und wurde für mehrere STM32-Serien und erweiterbare Flash-Konfiguration
+weiterentwickelt.
+ 
+## Beschreibung
+ 
+Der Bootloader startet nach dem Reset und prüft, ob im Flash-Speicher bereits
+eine gültige Application vorhanden ist. Wenn ja, wartet er ca. 100 Sekunden auf
+einen Firmware-Upload und springt danach automatisch in die Application. Wird
+keine gültige Application gefunden, wartet der Bootloader dauerhaft auf einen
+Upload.
+ 
+Die Übertragung erfolgt über XModem mit 16-Bit-CRC-Prüfung. Der Empfang ist
+empfängergesteuert: Der STM32 sendet zunächst ein `C` an den PC, worauf der
+Sender mit dem ersten 133-Byte-Paket antwortet. Jedes Paket wird mit ACK
+bestätigt oder bei Fehler mit NAK abgelehnt und erneut angefordert. Nach dem
+letzten Paket schreibt der Bootloader die Firmware in den Flash und springt in
+die Application.
+ 
+## Unterstützte Mikrocontroller
+ 
+| Mikrocontroller | Startadresse App | Endadresse App | Bank  | Gesamtspeicher | Bootloader | Application |
+|-----------------|------------------|----------------|-------|----------------|------------|-------------|
+| STM32F105       | `0x08008000`     | `0x0803FFFF`   | Bank1 | 256 kB         | 32 kB      | 224 kB      |
+| STM32F767       | `0x08008000`     | `0x0800FFFF`   | Bank1 | 2048 kB        | 32 kB      | 32 kB       |
+| STM32G071       | `0x08008000`     | `0x0801FFFF`   | Bank1 | 128 kB         | 32 kB      | 96 kB       |
+| STM32H743       | `0x08020000`     | `0x0803FFFF`   | Bank1 | 2048 kB        | 128 kB     | 128 kB      |
+ 
+Es wird ausschließlich Bank 1 verwendet. Nicht jeder Mikrocontroller nutzt den
+gesamten verfügbaren Speicher.
+ 
+## Dateien
+ 
+| Datei               | Beschreibung                                                                     |
+|---------------------|----------------------------------------------------------------------------------|
+| `xmodem.h`          | Protokollkonstanten, Steuerbytes, `xmodem_status`-Enum, Funktionsdeklarationen   |
+| `xmodem.c`          | XModem-Empfangslogik, CRC-Berechnung, Paketvalidierung, Application-Start        |
+| `flash.h`           | Flash-API für Löschen und Schreiben                                              |
+| `flash.c`           | Flash-Implementierung (Page/Sector je nach STM32-Familie)                        |
+| `stmflash_config.h` | Flash-Adressen, Speichergröße und Sector-Mapping für alle unterstützten Familien |
+ 
+## XModem-Protokoll
+ 
+### Paketformat
+ 
+| Byte 1 | Byte 2        | Byte 3                  | Byte 4–131  | Byte 132–133 |
+|--------|---------------|-------------------------|-------------|--------------|
+| SOH    | Paketnummer   | Komplement Paketnummer  | 128 Byte Daten | 16-Bit CRC |
+ 
+- Byte 1 darf nur `SOH`, `STX`, `EOT`, `CAN` oder `ETB` sein, andernfalls liegt
+ein Fehler vor.
+- Bytes 2 und 3 bilden eine Paketnummer mit Prüfsumme: die Summe beider Bytes
+ergibt immer `0xFF`.
+- Die Paketnummer beginnt bei 1 und rollt nach 255 auf 0 über.
+- Der CRC-16 wird ausschließlich über die 128 Datenbytes (Bytes 4–131) berechnet,
+mit dem Polynom `0x1021`.
+### Steuerbytes
+ 
+| Symbol | Wert   | Beschreibung                               |
+|--------|--------|--------------------------------------------|
+| `SOH`  | `0x01` | Start of Header (128-Byte-Paket)           |
+| `STX`  | `0x02` | Start of Header (1024-Byte-Paket)          |
+| `EOT`  | `0x04` | End of Transmission                        |
+| `ACK`  | `0x06` | Acknowledge – Paket korrekt empfangen      |
+| `NAK`  | `0x15` | Not Acknowledge – Paket wiederholen        |
+| `ETB`  | `0x17` | End of Transmission Block                  |
+| `CAN`  | `0x18` | Cancel – Übertragung abbrechen             |
+| `C`    | `0x43` | Empfangsbereitschaft im CRC-Modus          |
+ 
+### Fehlerbedingungen (führen zu NAK)
+ 
+1. Framing-Fehler bei einem beliebigen Byte
+2. Überlaufsfehler bei einem beliebigen Byte
+3. Doppeltes Paket (Sender hat ein ACK nicht erhalten)
+4. CRC-Fehler
+5. Timeout – kein Paket innerhalb von 1 Sekunde empfangen
+Nach maximal `X_MAX_ERROR` (Standard: 3) aufeinanderfolgenden Fehlern bricht der
+Bootloader die Übertragung ab.
+ 
+### Status-Enum `xmodem_status`
+ 
+| Wert               | Beschreibung                          |
+|--------------------|---------------------------------------|
+| `X_OK`             | Aktion erfolgreich                    |
+| `X_ERROR_CRC`      | CRC-Fehler im Paket                   |
+| `X_ERROR_NUMBER`   | Fehler bei der Paketnummer            |
+| `X_ERROR_UART`     | UART-Kommunikationsfehler             |
+| `X_ERROR_FLASH`    | Fehler beim Schreiben in den Flash    |
+| `X_ERROR_VALID`    | Application-Validierung fehlgeschlagen|
+| `X_ERROR`          | Unbestimmter Fehler                   |
+ 
+## Flash-Konfiguration
+ 
+Die Adressen werden in `stmflash_config.h` automatisch anhand des definierten
+Mikrocontroller-Symbols (`STM32F1`, `STM32F7`, `STM32G0`, `STM32H7`) gesetzt.
+Alle vier Adressen können vor dem Einbinden der Bibliothek in `main.h` mit eigenen
+Werten überschrieben werden:
+ 
 ```c
-int calcrc(char *ptr, int count)
+#define FLASH_APP_START_ADDRESS   0x08008000   // Startadresse der Application
+#define FLASH_APP_END_ADDRESS     0x0803FFFF   // Endadresse der Application
+#define FLASH_APP_VALID_ADDRESS   0x08007FF8   // Adresse des Gültigkeits-Flags
+#define FLASH_APP_CONFIG_ADDRESS  0x08038000   // Adresse des Konfigurationsbereichs
+```
+ 
+`FLASH_APP_VALID_ADDRESS` darf bei Mikrocontrollern mit Sektoren (F7, H7)
+**nicht imselben Sektor** wie der Bootloader liegen, da der gesamte Sektor vor dem
+Schreiben gelöscht wird.
+ 
+## Verwendung
+ 
+### 1. Bootloader-Projekt einrichten
+ 
+Alle Dateien (`xmodem.h`, `xmodem.c`, `flash.h`, `flash.c`, `stmflash_config.h`) in
+das STM32-Projekt einbinden und den Header in `main.c` einbinden:
+ 
+```c
+#include "xmodem.h"
+```
+ 
+### 2. Bootloader aufrufen
+ 
+In der Hauptschleife `xmodem_receive()` aufrufen:
+ 
+```c
+while (1)
 {
-    int  crc;
-    char i;
-
-    crc = 0;
-    while (--count >= 0)
-    {
-        crc = crc ^ (int) *ptr++ << 8;
-        i = 8;
-        do
-        {
-            if (crc & 0x8000)
-                crc = crc << 1 ^ 0x1021;
-            else
-                crc = crc << 1;
-        } while(--i);
-    }
-    return (crc);
+    xmodem_receive();
 }
 ```
+ 
+`xmodem_receive()` prüft beim ersten Aufruf, ob eine gültige Application im Flash liegt:
+- **Application vorhanden:** ca. 100 Sekunden auf Upload warten, danach automatisch in
+die Application springen.
+- **Keine Application:** dauerhaft auf Upload warten.
+
+### 3. Application anpassen – Linker-Skript
+ 
+In der Datei `STM32xxxxx_FLASH.ld` muss die Flash-Startadresse der Application auf den
+Wert von `FLASH_APP_START_ADDRESS` angepasst werden. Der Standardwert `0x8000000` muss
+ersetzt werden. Der neue Wert muss ein Vielfaches von `0x200` sein:
+ 
+```
+FLASH (rx) : ORIGIN = 0x8008000, LENGTH = 96K
+```
+ 
+Die Länge ergibt sich aus dem verfügbaren Speicher ab der neuen Startadresse.
+ 
+### 4. Application anpassen – Vektortabelle
+ 
+In `system_stm32xxxxx.c` muss die Vektortabelle auf die neue Startadresse verschoben werden.
+Dazu die Kommentierung der folgenden Zeile aufheben:
+ 
+```c
+#define USER_VECT_TAB_ADDRESS
+```
+ 
+Und direkt darunter das Offset auf die Startadresse der Application setzen. Für eine
+Startadresse von `0x08008000`:
+ 
+```c
+#define VECT_TAB_OFFSET  0x00008000U
+```
+ 
+### 5. Firmware über TeraTerm übertragen
+ 
+1. TeraTerm öffnen und mit dem richtigen COM-Port verbinden (gleiche Baudrate wie im
+Bootloader konfiguriert).
+2. Menü: **File → Transfer → XMODEM → Send**
+3. Die `.bin`-Datei der Application auswählen.
+4. Der Bootloader empfängt die Firmware, schreibt sie in den Flash und springt danach
+automatisch in die neue Application.
+
+## Quellen
+ 
+Diese Bibliothek basiert auf:
+- [ferenc-nemeth/stm32-bootloader](https://github.com/ferenc-nemeth/stm32-bootloader)
+
+## Abhängigkeiten
+ 
+- `main.h` – STM32 HAL
+- [`basicuart.h`](https://github.com/Diveturtle93/STM32_Basicuart) – UART-Sende- und Empfangsfunktionen
+- `millis.h` – Zeitbasis für den Application-Timeout
+
+## Lizenz
+ 
+Dieses Projekt steht unter der [GPL-3.0 Lizenz](LICENSE).
+ 
