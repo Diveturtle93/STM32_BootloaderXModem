@@ -76,7 +76,7 @@ typedef enum
 {
 	X_OK								= 0x00,								// Aktion erfolgreich
 	X_ERROR_CRC							= 0x01,								// CRC Fehler
-	X_ERROR_NUMBER						= 0x02,								// Paket Anzahl Fehlert
+	X_ERROR_NUMBER						= 0x02,								// Paket Anzahl Fehler
 	X_ERROR_UART						= 0x04,								// Uart Kommunikationsfehler
 	X_ERROR_FLASH						= 0x08,								// Flash Fehler
 	X_ERROR_VALID						= 0x10,								// Application Validierung fehlgeschlagen
