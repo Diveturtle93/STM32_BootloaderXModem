@@ -107,7 +107,7 @@ void xmodem_receive (void)
 		xmodem_status packet_status = X_ERROR;
 
 		// Der Header kann sein: SOH, STX, EOT und CAN
-		switch(header)
+		switch (header)
 		{
 			// 128 oder 1024 Bytes
 			case X_SOH:

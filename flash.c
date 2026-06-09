@@ -309,31 +309,31 @@ uint32_t GetPage (uint32_t address)
 // Flash Sector ermitteln
 //----------------------------------------------------------------------
 #ifdef FLASH_SECTOR
-uint32_t GetSector(uint32_t address)
+uint32_t GetSector (uint32_t address)
 {
 	// Debug
 #ifdef DEBUG_FLASH
 	uartTransmit("Sector ermitteln\n", 17);
 #endif
 
-    if (address < ADDR_FLASH_SECTOR_1_BANK1) return FLASH_SECTOR_0;
-    else if (address < ADDR_FLASH_SECTOR_2_BANK1) return FLASH_SECTOR_1;
-    else if (address < ADDR_FLASH_SECTOR_3_BANK1) return FLASH_SECTOR_2;
-    else if (address < ADDR_FLASH_SECTOR_4_BANK1) return FLASH_SECTOR_3;
-    else if (address < ADDR_FLASH_SECTOR_5_BANK1) return FLASH_SECTOR_4;
-    else if (address < ADDR_FLASH_SECTOR_6_BANK1) return FLASH_SECTOR_5;
-    else if (address < ADDR_FLASH_SECTOR_7_BANK1) return FLASH_SECTOR_6;
+	if (address < ADDR_FLASH_SECTOR_1_BANK1) return FLASH_SECTOR_0;
+	else if (address < ADDR_FLASH_SECTOR_2_BANK1) return FLASH_SECTOR_1;
+	else if (address < ADDR_FLASH_SECTOR_3_BANK1) return FLASH_SECTOR_2;
+	else if (address < ADDR_FLASH_SECTOR_4_BANK1) return FLASH_SECTOR_3;
+	else if (address < ADDR_FLASH_SECTOR_5_BANK1) return FLASH_SECTOR_4;
+	else if (address < ADDR_FLASH_SECTOR_6_BANK1) return FLASH_SECTOR_5;
+	else if (address < ADDR_FLASH_SECTOR_7_BANK1) return FLASH_SECTOR_6;
 
 #ifdef STM32H7
 	else return FLASH_SECTOR_7;
 #endif
 
 #ifdef STM32F7
-    else if (address < ADDR_FLASH_SECTOR_8_BANK1) return FLASH_SECTOR_7;
-    else if (address < ADDR_FLASH_SECTOR_9_BANK1) return FLASH_SECTOR_8;
-    else if (address < ADDR_FLASH_SECTOR_10_BANK1) return FLASH_SECTOR_9;
-    else if (address < ADDR_FLASH_SECTOR_11_BANK1) return FLASH_SECTOR_10;
-    else return FLASH_SECTOR_11;
+	else if (address < ADDR_FLASH_SECTOR_8_BANK1) return FLASH_SECTOR_7;
+	else if (address < ADDR_FLASH_SECTOR_9_BANK1) return FLASH_SECTOR_8;
+	else if (address < ADDR_FLASH_SECTOR_10_BANK1) return FLASH_SECTOR_9;
+	else if (address < ADDR_FLASH_SECTOR_11_BANK1) return FLASH_SECTOR_10;
+	else return FLASH_SECTOR_11;
 #endif
 }
 #endif

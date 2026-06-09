@@ -30,6 +30,11 @@
 #include "main.h"
 //----------------------------------------------------------------------
 
+// Einfuegen der STM Include-Dateien
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+
 // Definiere Debug Symbols
 //----------------------------------------------------------------------
 #ifdef DEBUG
@@ -37,16 +42,24 @@
 #endif
 //----------------------------------------------------------------------
 
+// Version definieren
+//----------------------------------------------------------------------
+#define XFLASH_MAJOR					0
+#define XFLASH_MINOR					0
+#define XFLASH_PATCH					0
+#define XFLASH_DEV						0
+//----------------------------------------------------------------------
+
 // Typedefines definieren
 //----------------------------------------------------------------------
 typedef enum
 {
-	FLASH_OK				= 0x00,											// Flash OK
-	X_FLASH_ERROR_SIZE		= 0x01,											// Flash Groesse fehlerhaft
-	FLASH_ERROR_WRITE		= 0x02,											// Flash schreiben fehlerhaft
-	FLASH_ERROR_READBACK	= 0x04,											// Flash zuruecklesen fehlerhaft
-	FLASH_ERROR_VALID		= 0x08,											// Flash validieren fehlerhaft
-	FLASH_ERROR				= 0xFF,											// Flash unbestimmter Fehler
+	FLASH_OK							= 0x00,								// Flash OK
+	X_FLASH_ERROR_SIZE					= 0x01,								// Flash Groesse fehlerhaft
+	FLASH_ERROR_WRITE					= 0x02,								// Flash schreiben fehlerhaft
+	FLASH_ERROR_READBACK				= 0x04,								// Flash zuruecklesen fehlerhaft
+	FLASH_ERROR_VALID					= 0x08,								// Flash validieren fehlerhaft
+	FLASH_ERROR							= 0xFF,								// Flash unbestimmter Fehler
 } flash_status;
 //----------------------------------------------------------------------
 
