@@ -22,3 +22,6 @@ Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 - Status-Enums `xmodem_status` und `flash_status` für die Fehlerrückgabe.
 - Versions-Defines `XMODEM_MAJOR`, `XMODEM_MINOR`, `XMODEM_PATCH` und `XMODEM_DEV` in `xmodem.h`.
 - README mit Protokollbeschreibung, Flash-Konfiguration und Anleitung zum Einbinden.
+- ARCHITECTURE mit Komponenten, Datenfluss, Flash-Aufteilung je Familie und Hinweisen zur Erweiterung.
+- RUNBOOK mit den Prozeduren am Gerät: Firmware übertragen, ohne Update in die Application springen und nach abgebrochenem Upload wiederherstellen, je mit Fehlerbildern.
+- README-Abschnitt `## Fehlerbilder` für Fehler beim Einbinden der Bibliothek.
