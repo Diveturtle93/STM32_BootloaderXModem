@@ -3,13 +3,12 @@
 //----------------------------------------------------------------------
 // Sprache	:	C
 // Datum	:	16.05.2025
-// Version	:	1.0
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader XModem
 // Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Inc/xmodem.h
 //----------------------------------------------------------------------
 
-// Saveguard symbol
+// Sicherheitssymbol
 //----------------------------------------------------------------------
 #pragma once
 //----------------------------------------------------------------------
@@ -30,70 +29,77 @@
 
 //----------------------------------------------------------------------
 
-// Einfuegen der eigenen Include Dateien
+// Einfuegen der eigenen Include-Dateien
 //----------------------------------------------------------------------
 
+//----------------------------------------------------------------------
+
+// Definiere Debug-Symbole
+//----------------------------------------------------------------------
+#ifdef DEBUG
+	#define DEBUG_XMODEM
+#endif
 //----------------------------------------------------------------------
 
 // Version definieren
 //----------------------------------------------------------------------
-#define XMODEM_MAJOR					0
-#define XMODEM_MINOR					0
-#define XMODEM_PATCH					0
-#define XMODEM_DEV						0
+#define XMODEM_MAJOR							0
+#define XMODEM_MINOR							0
+#define XMODEM_PATCH							0
+#define XMODEM_DEV								0
 //----------------------------------------------------------------------
 
 // Konstanten definieren
 //----------------------------------------------------------------------
-#define X_MAX_ERROR							3								// Anzahl maximal zulaessiger Fehler
+#define X_MAX_ERROR								3							// Anzahl maximal zulaessiger Fehler
 //----------------------------------------------------------------------
 
 // Paket groessen definieren
 //----------------------------------------------------------------------
-#define X_PACKET_NUMBER_SIZE				2								// Paket groesse
-#define X_PACKET_SIZE						128								// Paket 128 Byte
-#define X_PACKET_1K_SIZE					1024							// Paket 1024 Byte
-#define X_PACKET_CRC_SIZE					2								// CRC Paket groesse
+#define X_PACKET_NUMBER_SIZE					2							// Paket groesse
+#define X_PACKET_SIZE							128							// Paket 128 Byte
+#define X_PACKET_1K_SIZE						1024						// Paket 1024 Byte
+#define X_PACKET_CRC_SIZE						2							// CRC Paket groesse
 //----------------------------------------------------------------------
 
 // Indizes definieren
 //----------------------------------------------------------------------
-#define X_PACKET_NUMBER_INDEX				0								// Index
-#define X_PACKET_NUMBER_COMPLEMENT_INDEX	1								// Index Komplementaer
-#define X_PACKET_CRC_HIGH_INDEX				0								// CRC
-#define X_PACKET_CRC_LOW_INDEX				1								// CRC Komplementaer
+#define X_PACKET_NUMBER_INDEX					0							// Index
+#define X_PACKET_NUMBER_COMPLEMENT_INDEX		1							// Index Komplementaer
+#define X_PACKET_CRC_HIGH_INDEX					0							// CRC
+#define X_PACKET_CRC_LOW_INDEX					1							// CRC Komplementaer
 //----------------------------------------------------------------------
 
 // Polynom fuer CRC kalkulation
 //----------------------------------------------------------------------
-#define CRC_POLY							0x1021
+#define CRC_POLY								0x1021
 //----------------------------------------------------------------------
 
 // Protokoll Befehle definieren
 //----------------------------------------------------------------------
-#define X_SOH								1								// Start of header (128 Bytes)
-#define X_STX								2								// Start of header (1024 Bytes)
-#define X_EOT								4								// End of Transmission
-#define X_ACK								6								// Acknowledge
-#define X_NAK								21								// Not Acknowledge
-#define X_ETB								23								// End of Transmission
-#define X_CAN								24								// Cancel
-#define X_APP								65								// Abort
-#define X_C									67								// ASCII "C" to notify the host, we want to use CRC16
-#define X_A									97								// Abort
+#define X_SOH									1							// Start of header (128 Bytes)
+#define X_STX									2							// Start of header (1024 Bytes)
+#define X_EOT									4							// End of Transmission
+#define X_ACK									6							// Acknowledge
+#define X_NAK									21							// Not Acknowledge
+#define X_ETB									23							// End of Transmission
+#define X_CAN									24							// Cancel
+#define X_APP									65							// Abort
+#define X_C										67							// ASCII "C" to notify the host, we want to use CRC16
+#define X_A										97							// Abort
 //----------------------------------------------------------------------
 
 // XModem Status definieren
 //----------------------------------------------------------------------
 typedef enum
 {
-	X_OK								= 0x00,								// Aktion erfolgreich
-	X_ERROR_CRC							= 0x01,								// CRC Fehler
-	X_ERROR_NUMBER						= 0x02,								// Paket Anzahl Fehler
-	X_ERROR_UART						= 0x04,								// Uart Kommunikationsfehler
-	X_ERROR_FLASH						= 0x08,								// Flash Fehler
-	X_ERROR_VALID						= 0x10,								// Application Validierung fehlgeschlagen
-	X_ERROR								= 0xFF,								// Unbestimmter Fehler
+	X_OK =										0x00,						// Aktion erfolgreich
+	X_ERROR_CRC	=								0x01,						// CRC Fehler
+	X_ERROR_NUMBER =							0x02,						// Paket Anzahl Fehler
+	X_ERROR_UART =								0x04,						// Uart Kommunikationsfehler
+	X_ERROR_FLASH =								0x08,						// Flash Fehler
+	X_ERROR_VALID =								0x10,						// Application Validierung fehlgeschlagen
+	X_ERROR =									0xFF,						// Unbestimmter Fehler
 } xmodem_status;
 //----------------------------------------------------------------------
 

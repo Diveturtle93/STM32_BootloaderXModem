@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 // Sprache	:	C
 // Datum	:	16.05.2025
-// Version	:	1.0
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader XModem
 // Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/xmodem.c
@@ -20,7 +19,7 @@
 #include "main.h"
 //----------------------------------------------------------------------
 
-// Einfuegen der eigenen Include Dateien
+// Einfuegen der eigenen Include-Dateien
 //----------------------------------------------------------------------
 #include "basicuart.h"
 #include "flash.h"

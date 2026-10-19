@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 // Sprache	:	C
 // Datum	:	17.05.2025
-// Version	:	1.0
 // Autor	:	Diveturtle93
 // Projekt	:	Bootloader
 // Quelle	:	https://github.com/ferenc-nemeth/stm32-bootloader/blob/master/Src/flash.c
@@ -19,7 +18,7 @@
 
 //----------------------------------------------------------------------
 
-// Einfuegen der eigenen Include Dateien
+// Einfuegen der eigenen Include-Dateien
 //----------------------------------------------------------------------
 #ifdef DEBUG_FLASH
 	#include "basicuart.h"
@@ -27,11 +26,6 @@
 
 #include "flash.h"
 #include "stmflash_config.h"
-//----------------------------------------------------------------------
-
-// Definiere Typedefines
-//----------------------------------------------------------------------
-typedef void (*fnc_ptr)(void);
 //----------------------------------------------------------------------
 
 // Flash loeschen

@@ -1,0 +1,2 @@
+[c]
+types = uart_status             # Typ aus STM32_Basicuart (kein Submodul)
